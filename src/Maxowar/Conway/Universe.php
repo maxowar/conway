@@ -38,7 +38,7 @@ class Universe
      */
     private $grid;
 
-    public function __construct(int $size_x, int $size_y,  $population = 0.2)
+    public function __construct(int $size_x, int $size_y,  $population = 0.4)
     {
         $this->dimension = $size_x * $size_y;
         $this->size_x = $size_x;
@@ -62,6 +62,11 @@ class Universe
         return $this->cells;
     }
 
+    public function getGrid()
+    {
+        return $this->grid;
+    }
+
     /**
      * Let explode the big bang and auto generate living Cells
      */
@@ -75,6 +80,8 @@ class Universe
             $this->cells[$position->address()] = $position;
             $this->grid[$position->address()] = $position;
         }
+
+        $this->countNeighbours();
     }
 
     /**
@@ -121,11 +128,14 @@ class Universe
      */
     public function elapse()
     {
-        //$this->resetGrid();
+        $this->cells = [];
 
         foreach ($this->grid as $position) {
             if($position instanceof Position) {
                 $position->getCell()->elapse();
+                if($position->getCell()->isLiving()) {
+                    $this->cells[] = $position;
+                }
             }
         }
         
@@ -167,7 +177,7 @@ class Universe
             /** @var Position $position */
             foreach ($position->getNeighbours() as $neighbour) {
                 /** @var Position $neighbour */
-                $neighbour->getCell()->state()->addNeighbour();
+                $neighbour->getCell()->addNeighbour();
             }
         }
     }

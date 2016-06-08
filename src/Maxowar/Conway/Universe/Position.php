@@ -37,7 +37,7 @@ class Position
     {
         $this->universe = $universe;
         $this->coordinate = $coordinate;
-        $this->cell = $cell ?? new Cell();
+        $this->cell = $cell ?? new Cell(0);
 
         $this->neighbours = 0;
     }

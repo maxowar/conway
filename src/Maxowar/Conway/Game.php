@@ -24,7 +24,7 @@ class Game
 
     public function __construct()
     {
-        $this->iterations = 3;
+        $this->iterations = 2;
         $this->universe = new Universe(25, 10);
         $this->renderer = new ConsoleRenderer();
     }
@@ -47,11 +47,15 @@ class Game
         $this->renderer->welcome();
 
         while($this->iterations) {
-            echo "Iterazione $this->iterations\n\n";
-            $this->universe->elapse();
-            $this->renderer->render($this->universe->getCommunity());
+            echo "Iterazione $this->iterations\n";
+
+            //$this->renderer->render($this->universe->getCommunity());
+            $this->renderer->renderNeighbours($this->universe->getGrid());
             $this->iterations--;
-            sleep(1);
+
+            $this->universe->elapse();
+
+            usleep(80000);
         }
     }
 }

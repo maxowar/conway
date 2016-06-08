@@ -9,7 +9,7 @@ class AliveCell  extends State
 {
     public function elapse(Cell $cell)
     {
-        if($this->neighbours < 2 || $this->neighbours > 3) {
+        if($cell->getNeighbours() < 2 || $cell->getNeighbours() > 3) {
             $cell->change(new DeadCell());
         }
     }

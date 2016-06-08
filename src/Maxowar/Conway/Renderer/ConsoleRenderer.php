@@ -49,4 +49,30 @@ class ConsoleRenderer
             echo $value . ' ';
         }
     }
+    
+    public function renderNeighbours($grid)
+    {
+        $vector = [];
+
+        $width = 25;
+        foreach ($grid as $position) {
+            /** $var Position $position */
+
+            if(!$position instanceof Position) {
+                $vector[] = 0;
+            } elseif ($position->getCell()->isLiving()) {
+                $vector[] = chr(254);
+            } else {
+                $vector[] = $position->getCell()->getNeighbours();
+            }
+        }
+
+        foreach ($vector as $key => $value) {
+            if(($key % $width) == 0)
+                echo PHP_EOL;
+
+            echo $value . ' ';
+        }
+        echo PHP_EOL;
+    }
 }

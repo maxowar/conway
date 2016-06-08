@@ -16,7 +16,7 @@ class DeadCell extends State
 {
     public function elapse(Cell $cell)
     {
-        if($this->neighbours > 3) {
+        if($cell->getNeighbours() > 3) {
             $cell->change(new AliveCell());
         }
     }
