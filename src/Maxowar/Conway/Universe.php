@@ -70,7 +70,7 @@ class Universe
         while(count($this->cells) < round($this->dimension * $this->population)) {
             $cell = new Cell(100);
             $position = $this->getRandomPosition();
-            echo "Random position: $position\n";
+
             $position->place($cell);
             $this->cells[$position->address()] = $position;
             $this->grid[$position->address()] = $position;
@@ -87,6 +87,11 @@ class Universe
     {
         $addresser = new Addresser($this);
         $address = $addresser->linear($coordinate);
+
+        if(!$this->isValid($coordinate)) {
+            return null;
+        }
+
         if(!($this->grid[$address] instanceof Position)) {
             $this->grid[$address] = new Position($this, $coordinate);
         }
@@ -177,6 +182,14 @@ class Universe
     public function getRandomPosition()
     {
         return new Position($this, new Coordinate(rand(1, $this->size_x), rand(1, $this->size_y)));
+    }
+
+    public function isValid(Coordinate $coordinate)
+    {
+        $addresser = new Addresser($this);
+        $address = $addresser->linear($coordinate);
+
+        return $address > 0 && $address < $this->dimension;
     }
 
 }

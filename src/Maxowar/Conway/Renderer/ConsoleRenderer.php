@@ -3,6 +3,7 @@
 namespace Maxowar\Conway\Renderer;
 
 use Maxowar\Conway\Universe\Coordinate;
+use Maxowar\Conway\Universe\Position;
 
 class ConsoleRenderer
 {
@@ -37,7 +38,8 @@ class ConsoleRenderer
         }
 
         foreach ($data as $position) {
-            $vector[$position->coordinate()->address()] = chr(254);
+            /** @var Position $position */
+            $vector[$position->address()] = chr(254);
         }
 
         foreach ($vector as $key => $value) {

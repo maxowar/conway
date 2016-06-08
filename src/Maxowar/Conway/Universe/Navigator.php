@@ -4,16 +4,27 @@
 namespace Maxowar\Conway\Universe;
 
 
+use Maxowar\Conway\Universe\Navigator\Direction;
+
 class Navigator
 {
     /**
-     * @var Coordinate
+     * @var Position
      */
     private $cursor;
 
-    public function __construct(Position $startingAt)
+    private $path;
+
+    private $moved;
+
+    private $direction;
+
+    public function __construct(Position $startingAt, Direction $direction = null)
     {
-        $this->cursor = $startingAt;
+        $this->moveTO($startingAt);
+
+        $this->direction = $direction ?? new Direction();
+        $this->moved = false;
     }
 
     public function getCoordinate()
@@ -26,67 +37,83 @@ class Navigator
         return $this->cursor;
     }
 
+    public function back()
+    {
+        if(count($this->path)) {
+            $this->cursor = array_pop($this->path);
+        }
+    }
+    
+    public function ifCanGo($direction)
+    {
+        return $this->cursor->universe->getPositionAt(
+            $this->direction->$direction()
+        );
+    }
+
+    public function move($direction)
+    {
+        $this->moved = false;
+
+        $newCoordinate = $this->direction->$direction($this->cursor->coordinates());
+
+        if($this->cursor->universe->isValid($newCoordinate)) {
+            $destination = $this->cursor->universe->getPositionAt($newCoordinate);
+            $this->moveTo($destination);
+        }
+
+        return $this;
+    }
+
     public function up()
     {
-        $coordinates = new Coordinate($this->cursor->coordinates()->x(), $this->cursor->coordinates()->y() - 1);
-        $this->cursor = $this->cursor->universe->getPositionAt($coordinates);
-        
-        return $this;
+        return $this->move(__FUNCTION__);
     }
 
     public function down()
     {
-        $coordinates = new Coordinate($this->cursor->coordinates()->x(), $this->cursor->coordinates()->y() + 1);
-        $this->cursor = $this->cursor->universe->getPositionAt($coordinates);
-
-        return $this;
+        return $this->move(__FUNCTION__);
     }
 
     public function left()
     {
-        $coordinates = new Coordinate($this->cursor->coordinates()->x() - 1, $this->cursor->coordinates()->y());
-        $this->cursor = $this->cursor->universe->getPositionAt($coordinates);
-
-        return $this;
+        return $this->move(__FUNCTION__);
     }
 
     public function right()
     {
-        $coordinates = new Coordinate($this->cursor->coordinates()->x() + 1, $this->cursor->coordinates()->y());
-        $this->cursor = $this->cursor->universe->getPositionAt($coordinates);
-
-        return $this;
+        return $this->move(__FUNCTION__);
     }
 
     public function upRight()
     {
-        $coordinates = new Coordinate($this->cursor->coordinates()->x() + 1, $this->cursor->coordinates()->y() - 1);
-        $this->cursor = $this->cursor->universe->getPositionAt($coordinates);
-
-        return $this;
+        return $this->move(__FUNCTION__);
     }
 
     public function upLeft()
     {
-        $coordinates = new Coordinate($this->cursor->coordinates()->x() - 1, $this->cursor->coordinates()->y() - 1);
-        $this->cursor = $this->cursor->universe->getPositionAt($coordinates);
-
-        return $this;
+        return $this->move(__FUNCTION__);
     }
 
     public function downRight()
     {
-        $coordinates = new Coordinate($this->cursor->coordinates()->x() + 1, $this->cursor->coordinates()->y() + 1);
-        $this->cursor = $this->cursor->universe->getPositionAt($coordinates);
-
-        return $this;
+        return $this->move(__FUNCTION__);
     }
 
     public function downLeft()
     {
-        $coordinates = new Coordinate($this->cursor->coordinates()->x() - 1, $this->cursor->coordinates()->y() + 1);
-        $this->cursor = $this->cursor->universe->getPositionAt($coordinates);
+        return $this->move(__FUNCTION__);
+    }
 
-        return $this;
+    public function moveTO(Position $position)
+    {
+        $this->path[] = $this->cursor;
+        $this->cursor = $position;
+        $this->moved = true;
+    }
+
+    public function moved()
+    {
+        return $this->moved;
     }
 }

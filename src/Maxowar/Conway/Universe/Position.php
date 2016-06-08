@@ -80,16 +80,51 @@ class Position
     {
         $navigator = new Navigator($this);
 
-        return [
-            $navigator->up()->getPosition(),
-            $navigator->right()->getPosition(),
-            $navigator->down()->getPosition(),
-            $navigator->down()->getPosition(),
-            $navigator->left()->getPosition(),
-            $navigator->left()->getPosition(),
-            $navigator->up()->getPosition(),
-            $navigator->up()->getPosition()
-        ];
+        $neighbours = [];
+
+        //$navigator->follow()->up()->right()->down()->down()
+
+        if($navigator->up()->moved()) {
+            $neighbours[] = $navigator->getPosition();
+            $navigator->back();
+        }
+
+        if($navigator->upRight()->moved()) {
+            $neighbours[] = $navigator->getPosition();
+            $navigator->back();
+        }
+
+        if($navigator->upLeft()->moved()) {
+            $neighbours[] = $navigator->getPosition();
+            $navigator->back();
+        }
+
+        if($navigator->left()->moved()) {
+            $neighbours[] = $navigator->getPosition();
+            $navigator->back();
+        }
+
+        if($navigator->right()->moved()) {
+            $neighbours[] = $navigator->getPosition();
+            $navigator->back();
+        }
+
+        if($navigator->down()->moved()) {
+            $neighbours[] = $navigator->getPosition();
+            $navigator->back();
+        }
+
+        if($navigator->downRight()->moved()) {
+            $neighbours[] = $navigator->getPosition();
+            $navigator->back();
+        }
+
+        if($navigator->downLeft()->moved()) {
+            $neighbours[] = $navigator->getPosition();
+            $navigator->back();
+        }
+
+        return $neighbours;
     }
 
     public function countNeighbours()
