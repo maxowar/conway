@@ -22,11 +22,43 @@ class Game
      */
     private $universe;
 
-    public function __construct()
+    public function __construct(int $iterations = 1)
     {
-        $this->iterations = 2;
+        $this->iterations = $iterations;
         $this->universe = new Universe(25, 10);
         $this->renderer = new ConsoleRenderer();
+    }
+
+    public function loadUniverse(string $filename)
+    {
+        $fp = fopen($filename, 'r');
+        $width = $height = 0;
+        $data = [];
+        while ($line = fgets($fp)) {
+            if($width && $width != strlen($line)) {
+                throw new \RangeException('File not valid');
+            } else {
+                $width = strlen($line);
+            }
+            $height++;
+
+            array_merge($data, str_split($line));
+        }
+        
+        $this->universe = new Universe($width, $height);
+        $grid = $this->universe->getGrid();
+        
+        foreach ($data as $address => $status) {
+            if(!in_array($status, ['A', 'D'])) {
+                throw new \UnexpectedValueException('File not valid');
+            }
+            if($status == 'A') {
+                $cell = new Cell(100);
+            } else {
+                $cell = new Cell(0);
+            }
+            $grid[$address] = new Universe\Position($this->universe, $this->universe->getAddresser()->decode($address), $cell);
+        }
     }
 
     /**

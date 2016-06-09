@@ -150,6 +150,6 @@ class Position
     public function address()
     {
         $addresser = new Addresser($this->universe);
-        return $addresser->linear($this->coordinate);
+        return $addresser->encode($this->coordinate);
     }
 }

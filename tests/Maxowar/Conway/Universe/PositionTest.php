@@ -22,9 +22,14 @@ class PositionTest extends \PHPUnit_Framework_TestCase
 
     public function testCoordinates()
     {
-        $coordinate = $this->createMock('\\Maxowar\\Conway\\Universe\\Coordinate')
+        $coordinate = $this->getMockBuilder(Coordinate::class)
+                        ->setMethods(['x', 'y'])
+                        ->getMock();
+        $coordinate
             ->method('x')
-            ->willReturn(3)
+            ->willReturn(3);
+
+        $coordinate
             ->method('y')
             ->willReturn(7);
 
@@ -36,12 +41,8 @@ class PositionTest extends \PHPUnit_Framework_TestCase
 
     public function testAddress()
     {
-        $coordinate = $this->createMock('\\Maxowar\\Conway\\Universe\\Coordinate')
-            ->method('x')
-            ->willReturn(3)
-            ->method('y')
-            ->willReturn(7);
-        $universe = $this->createMock('\\Maxowar\\Conway\\Universe');
+        $coordinate = $this->createMock(Coordinate::class);
+        $universe = $this->createMock(Universe::class);
 
         $position = new Position($universe, $coordinate);
 

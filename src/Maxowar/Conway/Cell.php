@@ -5,10 +5,25 @@ namespace Maxowar\Conway;
 use Maxowar\Conway\Cell\State\AliveCell;
 use Maxowar\Conway\Cell\State;
 
+/**
+ * The Cell
+ *
+ * Can live, die and live and die again inside a Universe
+ *
+ * @package Maxowar\Conway
+ */
 class Cell
 {
+    /**
+     * @var State\DeadCell
+     */
     private $state;
 
+    /**
+     * The neighbours cell count
+     *
+     * @var int
+     */
     protected $neighbours;
 
     public function __construct($probability = 100)
@@ -22,6 +37,9 @@ class Cell
         $this->neighbours = 0;
     }
 
+    /**
+     * Elapse a generation
+     */
     public function elapse()
     {
         $this->state->elapse($this);

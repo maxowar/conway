@@ -6,6 +6,7 @@ use Maxowar\Conway\Cell;
 use Maxowar\Conway\Universe\Addresser;
 use Maxowar\Conway\Universe\Coordinate;
 use Maxowar\Conway\Universe\Position;
+use Maxowar\Conway\Universe\Serializer;
 
 /**
  * A Universe is where life happen
@@ -14,7 +15,7 @@ use Maxowar\Conway\Universe\Position;
  *
  * @package Maxowar\Conway
  */
-class Universe
+class Universe implements \Serializable
 {
     private $dimension;
 
@@ -48,8 +49,6 @@ class Universe
         $this->cells = [];
 
         $this->grid = new \SplFixedArray($this->dimension);
-
-        echo "Universo di dimensione {$this->dimension}\n";
     }
 
     /**
@@ -93,7 +92,7 @@ class Universe
     public function getPositionAt(Coordinate $coordinate)
     {
         $addresser = new Addresser($this);
-        $address = $addresser->linear($coordinate);
+        $address = $addresser->encode($coordinate);
 
         if(!$this->isValid($coordinate)) {
             return null;
@@ -197,9 +196,39 @@ class Universe
     public function isValid(Coordinate $coordinate)
     {
         $addresser = new Addresser($this);
-        $address = $addresser->linear($coordinate);
+        $address = $addresser->encode($coordinate);
 
         return $address > 0 && $address < $this->dimension;
     }
 
+    public function getAddresser()
+    {
+        return new Addresser($this);
+    }
+
+    /**
+     * String representation of object
+     * @link http://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
+     * @since 5.1.0
+     */
+    public function serialize()
+    {
+        $serializer = new Serializer();
+        return $serializer->serialize($this);
+    }
+
+    /**
+     * Constructs the object
+     * @link http://php.net/manual/en/serializable.unserialize.php
+     * @param string $serialized <p>
+     * The string representation of the object.
+     * </p>
+     * @return void
+     * @since 5.1.0
+     */
+    public function unserialize($serialized)
+    {
+        // TODO: Implement unserialize() method.
+    }
 }
