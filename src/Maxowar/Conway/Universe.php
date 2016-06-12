@@ -211,6 +211,11 @@ class Universe
 
     public function isValid(Coordinate $coordinate)
     {
+        if($coordinate->x() > $this->width() ||
+            $coordinate->y() > $this->height()) {
+            return false;
+        }
+
         $addresser = new Addresser($this);
         $address = $addresser->encode($coordinate);
 
