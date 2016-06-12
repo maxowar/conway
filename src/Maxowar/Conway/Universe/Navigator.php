@@ -55,13 +55,16 @@ class Navigator
     {
         $this->moved = false;
 
-        $newCoordinate = $this->direction->$direction($this->cursor->coordinates());
+        try {
+            $newCoordinate = $this->direction->$direction($this->cursor->coordinates());
 
-        if($this->cursor->universe->isValid($newCoordinate)) {
-            $destination = $this->cursor->universe->getPositionAt($newCoordinate);
-            $this->moveTo($destination);
+            if($this->cursor->universe->isValid($newCoordinate)) {
+                $destination = $this->cursor->universe->getPositionAt($newCoordinate);
+                $this->moveTo($destination);
+            }
+        } catch (\OutOfRangeException $e) {
+
         }
-
         return $this;
     }
 
