@@ -24,41 +24,51 @@ class Direction
     
     public function up(Coordinate $coordinate)
     {
-        return new Coordinate($coordinate->x(), $coordinate->y() - 1);
+        return new Coordinate($coordinate->x(), $this->decrement($coordinate->y()));
     }
 
     public function down(Coordinate $coordinate)
     {
-        return new Coordinate($coordinate->x(), $coordinate->y() + 1);
+        return new Coordinate($coordinate->x(), $this->increment($coordinate->y()));
     }
 
     public function left(Coordinate $coordinate)
     {
-        return new Coordinate($coordinate->x() - 1, $coordinate->y());
+        return new Coordinate($this->decrement($coordinate->x()), $coordinate->y());
     }
 
     public function right(Coordinate $coordinate)
     {
-        return new Coordinate($coordinate->x() + 1, $coordinate->y());
+        return new Coordinate($this->increment($coordinate->x()), $coordinate->y());
     }
 
     public function upRight(Coordinate $coordinate)
     {
-        return new Coordinate($coordinate->x() + 1, $coordinate->y() - 1);
+        return new Coordinate($this->increment($coordinate->x()), $this->decrement($coordinate->y()));
     }
 
     public function upLeft(Coordinate $coordinate)
     {
-        return new Coordinate($coordinate->x() - 1, $coordinate->y() - 1);
+        return new Coordinate($this->decrement($coordinate->x()), $this->decrement($coordinate->y()));
     }
 
     public function downRight(Coordinate $coordinate)
     {
-        return new Coordinate($coordinate->x() + 1, $coordinate->y() + 1);
+        return new Coordinate($this->increment($coordinate->x()), $this->increment($coordinate->y()));
     }
 
     public function downLeft(Coordinate $coordinate)
     {
-        return new Coordinate($coordinate->x() - 1, $coordinate->y() + 1);
+        return new Coordinate($this->decrement($coordinate->x()), $this->increment($coordinate->y()));
+    }
+
+    private function increment($value)
+    {
+        return $value + 1 == 0 ? 1 : $value + 1;
+    }
+
+    private function decrement($value)
+    {
+        return $value - 1 == 0 ? -1 : $value - 1;
     }
 }

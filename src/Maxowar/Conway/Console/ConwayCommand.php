@@ -18,16 +18,21 @@ class ConwayCommand extends Command
             ->setName('Conway')
             ->setDescription('PHP Cornways life game')
             ->addArgument(
-                'generations',
+                'width',
                 InputArgument::OPTIONAL,
-                'How many generations you want elapse in the Universe?'
+                'Width of the Universe'
+            )
+            ->addArgument(
+                'height',
+                InputArgument::OPTIONAL,
+                'Height of the Universe'
             )
             ->addOption(
-                'size',
-                null,
+                'generations',
+                'g',
                 InputOption::VALUE_OPTIONAL,
-                'Size of the universe',
-                '25x10'
+                'How many generations you want elapse in the Universe?',
+                1
             )
             ->addOption(
                 'load',
@@ -39,15 +44,13 @@ class ConwayCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $game = new Game($input->getArgument('generations'));
+        $game = new Game([
+            'width' => $input->getArgument('width'),
+            'height' => $input->getArgument('height'),
+            'load' => $input->getOption('load'),
+        ]);
 
-        if($input->hasOption('load')) {
-            if(!file_exists($input->getOption('load'))) {
-                throw new \InvalidArgumentException('File not exists');
-            }
-            $game->loadUniverse($input->getOption('load'));
-        }
-
-        $game->run($input);
+        $game->init();
+        $game->run($input->getOption('generations'));
     }
 }

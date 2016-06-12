@@ -22,31 +22,49 @@ class Game
      */
     private $universe;
 
-    public function __construct(int $iterations = 1)
+    private $settings;
+
+    private $initialized;
+
+    public function __construct(array $settings = [])
     {
-        $this->iterations = $iterations;
-        $this->universe = new Universe(25, 10);
-        $this->renderer = new ConsoleRenderer();
+        $this->settings    = array_merge($this->getDefaultSettings(), $settings);
+
+        $this->initialized = false;
     }
 
-    public function loadUniverse(string $filename)
+    private function getDefaultSettings()
     {
+        return [
+            'width' => 25,
+            'height' => 10,
+            'generations' => 1,
+            'load' => null
+        ];
+    }
+
+    private function loadUniverse(string $filename)
+    {
+        if(!file_exists($filename)) {
+            throw new \InvalidArgumentException("File $filename not exists");
+        }
+
         $fp = fopen($filename, 'r');
         $width = $height = 0;
         $data = [];
-        while ($line = fgets($fp)) {
+        while ($line = trim(fgets($fp))) {
             if($width && $width != strlen($line)) {
-                throw new \RangeException('File not valid');
+                throw new \RangeException('Invalid Universe format');
             } else {
                 $width = strlen($line);
             }
             $height++;
 
-            array_merge($data, str_split($line));
+            $data = array_merge($data, str_split($line));
         }
         
-        $this->universe = new Universe($width, $height);
-        $grid = $this->universe->getGrid();
+        $universe = new Universe($width, $height);
+        $grid = $universe->getGrid();
         
         foreach ($data as $address => $status) {
             if(!in_array($status, ['A', 'D'])) {
@@ -57,8 +75,14 @@ class Game
             } else {
                 $cell = new Cell(0);
             }
-            $grid[$address] = new Universe\Position($this->universe, $this->universe->getAddresser()->decode($address), $cell);
+            $grid[$address] = $position = new Universe\Position($universe, $universe->getAddresser()->decode($address), $cell);
+
+            if($position->getCell()->isLiving())
+                $universe->storeLivingCell($position);
         }
+        $universe->countNeighbours();
+
+        return $universe;
     }
 
     /**
@@ -66,24 +90,39 @@ class Game
      */
     public function init()
     {
-        $this->universe->bigBang();
+        // universe
+        if($this->settings['load']) {
+            $this->universe = $this->loadUniverse($this->settings['load']);
+        } else {
+            $this->universe = new Universe($this->settings['width'], $this->settings['height']);
+            $this->universe->bigBang();
+        }
+
+
+
+        // renderer
+        $this->renderer    = new ConsoleRenderer($this->universe->width(), $this->universe->height());
+
+        $this->initialized = true;
     }
 
     /**
      * Run the game
      */
-    public function run()
+    public function run($generations = 1)
     {
-        $this->init();
+        if(!$this->initialized) {
+            throw new \RuntimeException('Game not initialized');
+        }
 
         $this->renderer->welcome();
 
-        while($this->iterations) {
+        while($generations) {
             echo "Iterazione $this->iterations\n";
 
             //$this->renderer->render($this->universe->getCommunity());
             $this->renderer->renderNeighbours($this->universe->getGrid());
-            $this->iterations--;
+            $generations--;
 
             $this->universe->elapse();
 

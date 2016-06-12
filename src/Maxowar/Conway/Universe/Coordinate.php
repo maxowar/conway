@@ -18,6 +18,9 @@ class Coordinate
 
     public function __construct(int $x, int $y)
     {
+        if($x == 0 || $y == 0) {
+            throw new \OutOfRangeException('Point does not exists');
+        }
         $this->x = $x;
         $this->y = $y;
     }

@@ -30,7 +30,7 @@ class Cell
     {
         $this->state = new State\DeadCell();
 
-        if(mt_rand(0, 100) > (100 - $probability)) {
+        if(mt_rand(0, 99) >= (100 - $probability)) {
             $this->comeToLight();
         }
 

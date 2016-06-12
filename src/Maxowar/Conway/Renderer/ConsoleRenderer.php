@@ -7,12 +7,15 @@ use Maxowar\Conway\Universe\Position;
 
 class ConsoleRenderer
 {
-    private $data;
+    private $width;
+
+    private $height;
 
     
-    public function __construct()
+    public function __construct($width, $height)
     {
-
+        $this->width = $width;
+        $this->height = $height;
     }
 
     public function welcome()
@@ -27,8 +30,7 @@ class ConsoleRenderer
     
     public function render($data)
     {
-        $dimension = 250;
-        $width = 25;
+        $dimension = $this->width * $this->height;
 
         $vector = [];
 
@@ -43,7 +45,7 @@ class ConsoleRenderer
         }
 
         foreach ($vector as $key => $value) {
-            if(($key % $width) == 0)
+            if(($key % $this->width) == 0)
                 echo PHP_EOL;
 
             echo $value . ' ';
@@ -54,7 +56,6 @@ class ConsoleRenderer
     {
         $vector = [];
 
-        $width = 25;
         foreach ($grid as $position) {
             /** $var Position $position */
 
@@ -68,7 +69,7 @@ class ConsoleRenderer
         }
 
         foreach ($vector as $key => $value) {
-            if(($key % $width) == 0)
+            if(($key % $this->width) == 0)
                 echo PHP_EOL;
 
             echo $value . ' ';

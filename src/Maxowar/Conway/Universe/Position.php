@@ -152,4 +152,9 @@ class Position
         $addresser = new Addresser($this->universe);
         return $addresser->encode($this->coordinate);
     }
+
+    public function belongsTo(Universe $universe)
+    {
+        return $universe === $this->universe;
+    }
 }

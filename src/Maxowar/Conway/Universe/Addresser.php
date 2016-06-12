@@ -20,6 +20,6 @@ class Addresser
 
     public function decode(int $address)
     {
-        return new Coordinate($address % $this->universe->width(), ceil($address / $this->universe->width()));
+        return new Coordinate(($address % $this->universe->width()) + 1, $address == 0 ? 1 : intval($address / $this->universe->width()) + 1);
     }
 }

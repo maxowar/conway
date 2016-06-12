@@ -15,7 +15,7 @@ use Maxowar\Conway\Universe\Serializer;
  *
  * @package Maxowar\Conway
  */
-class Universe implements \Serializable
+class Universe
 {
     private $dimension;
 
@@ -133,12 +133,28 @@ class Universe implements \Serializable
             if($position instanceof Position) {
                 $position->getCell()->elapse();
                 if($position->getCell()->isLiving()) {
-                    $this->cells[] = $position;
+                    $this->storeLivingCell($position);
                 }
             }
         }
         
         $this->census();
+    }
+
+    /**
+     * @todo Autmatize using Grid
+     *
+     * @param Position $position
+     */
+    public function storeLivingCell(Position $position)
+    {
+        if(!$position->getCell()->isLiving())
+            throw new \InvalidArgumentException('Cell must be alive');
+        
+        if(!$position->belongsTo($this))
+            throw new \InvalidArgumentException('Position from another Universe');
+
+        $this->cells[] = $position;
     }
 
     /**
@@ -190,7 +206,7 @@ class Universe implements \Serializable
      */
     public function getRandomPosition()
     {
-        return new Position($this, new Coordinate(rand(1, $this->size_x), rand(1, $this->size_y)));
+        return $this->getPositionAt(new Coordinate(rand(1, $this->size_x), rand(1, $this->size_y)));
     }
 
     public function isValid(Coordinate $coordinate)
@@ -198,37 +214,11 @@ class Universe implements \Serializable
         $addresser = new Addresser($this);
         $address = $addresser->encode($coordinate);
 
-        return $address > 0 && $address < $this->dimension;
+        return $address >= 0 && $address < $this->dimension;
     }
 
     public function getAddresser()
     {
         return new Addresser($this);
-    }
-
-    /**
-     * String representation of object
-     * @link http://php.net/manual/en/serializable.serialize.php
-     * @return string the string representation of the object or null
-     * @since 5.1.0
-     */
-    public function serialize()
-    {
-        $serializer = new Serializer();
-        return $serializer->serialize($this);
-    }
-
-    /**
-     * Constructs the object
-     * @link http://php.net/manual/en/serializable.unserialize.php
-     * @param string $serialized <p>
-     * The string representation of the object.
-     * </p>
-     * @return void
-     * @since 5.1.0
-     */
-    public function unserialize($serialized)
-    {
-        // TODO: Implement unserialize() method.
     }
 }
