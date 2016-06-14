@@ -61,8 +61,12 @@ class Universe
         return $this->cells;
     }
 
+    /**
+     * @return \SplFixedArray
+     */
     public function getGrid()
     {
+        // @todo return a speacilzed Iterator for grid
         return $this->grid;
     }
 

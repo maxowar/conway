@@ -45,44 +45,8 @@ class Game
 
     private function loadUniverse(string $filename)
     {
-        if(!file_exists($filename)) {
-            throw new \InvalidArgumentException("File $filename not exists");
-        }
-
-        $fp = fopen($filename, 'r');
-        $width = $height = 0;
-        $data = [];
-        while ($line = trim(fgets($fp))) {
-            if($width && $width != strlen($line)) {
-                throw new \RangeException('Invalid Universe format');
-            } else {
-                $width = strlen($line);
-            }
-            $height++;
-
-            $data = array_merge($data, str_split($line));
-        }
-        
-        $universe = new Universe($width, $height);
-        $grid = $universe->getGrid();
-        
-        foreach ($data as $address => $status) {
-            if(!in_array($status, ['A', 'D'])) {
-                throw new \UnexpectedValueException('File not valid');
-            }
-            if($status == 'A') {
-                $cell = new Cell(100);
-            } else {
-                $cell = new Cell(0);
-            }
-            $grid[$address] = $position = new Universe\Position($universe, $universe->getAddresser()->decode($address), $cell);
-
-            if($position->getCell()->isLiving())
-                $universe->storeLivingCell($position);
-        }
-        $universe->countNeighbours();
-
-        return $universe;
+        $loader = new Universe\UniverseLoader(new Universe\UniverseSerializer());
+        return $loader->load($filename);
     }
 
     /**
@@ -120,8 +84,8 @@ class Game
         while($generations) {
             echo "Iterazione $this->iterations\n";
 
-            //$this->renderer->render($this->universe->getCommunity());
-            $this->renderer->renderNeighbours($this->universe->getGrid());
+            $this->renderer->render($this->universe->getCommunity());
+            //$this->renderer->renderNeighbours($this->universe->getGrid());
             $generations--;
 
             $this->universe->elapse();

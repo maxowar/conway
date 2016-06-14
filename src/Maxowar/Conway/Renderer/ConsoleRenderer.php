@@ -4,6 +4,7 @@ namespace Maxowar\Conway\Renderer;
 
 use Maxowar\Conway\Universe\Coordinate;
 use Maxowar\Conway\Universe\Position;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ConsoleRenderer
 {
@@ -11,21 +12,19 @@ class ConsoleRenderer
 
     private $height;
 
+    private $output;
     
     public function __construct($width, $height)
     {
         $this->width = $width;
         $this->height = $height;
+
+        $this->output = new ConsoleOutput();
     }
 
     public function welcome()
     {
         echo PHP_EOL . "PHP Conway's life game" . PHP_EOL;
-    }
-    
-    public function getMatrix()
-    {
-
     }
     
     public function render($data)
